@@ -6,7 +6,7 @@ import {
 } from './simulationUtils';
 import { CarState, GameStatus } from './types';
 import { getDrivingAdvice } from './services/geminiService';
-import { RotateCcw, MessageSquare, Info, Car, Sliders, Eye, Map, X } from 'lucide-react';
+import { RotateCcw, MessageSquare, Info, Car, Sliders, Eye, Map } from 'lucide-react';
 
 const App: React.FC = () => {
   // Settings State
@@ -29,7 +29,7 @@ const App: React.FC = () => {
   const [isGasPressed, setIsGasPressed] = useState(false);
   const [isBrakePressed, setIsBrakePressed] = useState(false);
   
-  const [aiAdvice, setAiAdvice] = useState<string>("你好！我是你的老司机教练。请先挂入倒挡 (R)，然后轻踩油门开始倒车入库！");
+  const [aiAdvice, setAiAdvice] = useState<string>("你好！我是你的老司机教练。挂入倒挡 (R)，轻踩油门开始倒车入库！");
   const [isLoadingAi, setIsLoadingAi] = useState(false);
   const [showPredictivePath, setShowPredictivePath] = useState(true);
 
@@ -131,8 +131,14 @@ const App: React.FC = () => {
 
   const handleAiAdvice = async (state: CarState, status: GameStatus, action: string) => {
     setIsLoadingAi(true);
-    const advice = await getDrivingAdvice(state, parkingSpot, status, action);
-    setAiAdvice(advice);
+    try {
+        const advice = await getDrivingAdvice(state, parkingSpot, status, action);
+        setAiAdvice(advice);
+    } catch (e) {
+        console.error(e);
+        setAiAdvice("AI 服务暂时不可用。");
+    }
+    
     setIsLoadingAi(false);
   };
 
@@ -233,11 +239,12 @@ const App: React.FC = () => {
     <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-gray-900 text-white overflow-hidden touch-none">
       
       {/* LEFT: Simulation Area */}
-      <div className="relative flex-grow h-[55dvh] md:h-full bg-gray-900 overflow-hidden flex items-center justify-center border-b md:border-r border-gray-700">
+      {/* CRITICAL FIX: Added shrink-0 and changed to h-[40dvh] to prevent it from disappearing on mobile */}
+      <div className="relative h-[40dvh] md:h-full w-full shrink-0 bg-gray-900 overflow-hidden flex items-center justify-center border-b md:border-r border-gray-700">
         
         {/* Top Bar Controls */}
-        <div className="absolute top-4 left-4 z-10 flex gap-2 flex-wrap max-w-[80%]">
-            <div className={`px-4 py-2 rounded-lg font-bold shadow-lg backdrop-blur-md flex items-center gap-2 ${
+        <div className="absolute top-2 md:top-4 left-2 md:left-4 z-10 flex gap-2 flex-wrap max-w-[80%]">
+            <div className={`px-3 py-1 md:px-4 md:py-2 rounded-lg font-bold shadow-lg backdrop-blur-md flex items-center gap-2 text-xs md:text-base ${
                 gameStatus === GameStatus.PLAYING ? 'bg-blue-600/80' :
                 gameStatus === GameStatus.CRASHED ? 'bg-red-600/90' : 'bg-green-600/90'
             }`}>
@@ -245,20 +252,20 @@ const App: React.FC = () => {
                 {gameStatus === GameStatus.CRASHED && "发生碰撞!"}
                 {gameStatus === GameStatus.PARKED && "完美入库!"}
             </div>
-             <button onClick={handleReset} className="p-2 bg-gray-700/80 rounded-lg hover:bg-gray-600/80 transition shadow-lg" title="重置">
-                <RotateCcw size={20} />
+             <button onClick={handleReset} className="p-1.5 md:p-2 bg-gray-700/80 rounded-lg hover:bg-gray-600/80 transition shadow-lg" title="重置">
+                <RotateCcw size={16} className="md:w-5 md:h-5" />
              </button>
              
              {/* View Toggle */}
              <button 
                 onClick={() => setViewMode(prev => prev === '2D' ? '3D' : '2D')}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg font-bold shadow-lg transition-all ${
+                className={`flex items-center gap-2 px-2 py-1 md:px-3 md:py-2 rounded-lg font-bold shadow-lg transition-all ${
                     viewMode === '3D' ? 'bg-yellow-500 text-black' : 'bg-gray-700/80 text-white hover:bg-gray-600'
                 }`}
                 title="切换视角"
              >
-                {viewMode === '2D' ? <Map size={20} /> : <Eye size={20} />}
-                <span className="text-xs">{viewMode === '2D' ? '2D 俯视' : '3D 追尾'}</span>
+                {viewMode === '2D' ? <Map size={16} className="md:w-5 md:h-5" /> : <Eye size={16} className="md:w-5 md:h-5" />}
+                <span className="text-[10px] md:text-xs">{viewMode === '2D' ? '2D 俯视' : '3D 追尾'}</span>
              </button>
         </div>
 
@@ -379,15 +386,16 @@ const App: React.FC = () => {
       </div>
 
       {/* RIGHT: Controls */}
-      <div className="w-full md:w-96 flex flex-col bg-gray-900 border-l border-gray-800 shadow-2xl z-20">
+      {/* CRITICAL FIX: flex-1, w-full, min-h-0 to allow proper sizing and scrolling */}
+      <div className="flex-1 w-full md:w-96 flex flex-col min-h-0 bg-gray-900 border-l border-gray-800 shadow-2xl z-20">
         
         {/* Advice Panel */}
-        <div className="p-4 bg-gray-800 border-b border-gray-700 min-h-[140px] flex flex-col shrink-0">
-            <div className="flex items-center gap-2 mb-2 text-yellow-400 font-bold">
-                <Car size={20} />
+        <div className="p-2 md:p-4 bg-gray-800 border-b border-gray-700 min-h-[100px] md:min-h-[140px] flex flex-col shrink-0">
+            <div className="flex items-center gap-2 mb-2 text-yellow-400 font-bold text-sm md:text-base">
+                <Car size={16} className="md:w-5 md:h-5" />
                 <span>老司机 (Old Driver)</span>
             </div>
-            <div className="flex-grow bg-gray-900/50 rounded p-3 text-sm leading-relaxed border border-gray-700 text-gray-300 relative">
+            <div className="flex-grow bg-gray-900/50 rounded p-2 md:p-3 text-xs md:text-sm leading-relaxed border border-gray-700 text-gray-300 relative overflow-y-auto">
                {isLoadingAi ? (
                    <div className="flex items-center gap-2 text-gray-500 animate-pulse">
                        <MessageSquare size={16} />
@@ -400,8 +408,8 @@ const App: React.FC = () => {
         </div>
 
         {/* Settings Panel */}
-        <div className="px-6 py-2 border-b border-gray-800 bg-gray-800/30">
-            <div className="flex items-center gap-2 text-gray-400 mb-2 text-xs uppercase font-bold tracking-wider">
+        <div className="px-4 py-2 border-b border-gray-800 bg-gray-800/30 shrink-0">
+            <div className="flex items-center gap-2 text-gray-400 mb-2 text-[10px] md:text-xs uppercase font-bold tracking-wider">
                 <Sliders size={12} />
                 难度 (Difficulty)
             </div>
@@ -422,15 +430,15 @@ const App: React.FC = () => {
         </div>
 
         {/* Main Controls - Redesigned */}
-        <div className="flex-grow p-4 flex flex-col gap-4 relative overflow-y-auto">
+        <div className="flex-grow p-2 md:p-4 flex flex-col gap-2 md:gap-4 relative overflow-y-auto overscroll-contain">
             
             {/* Gear Selector */}
-            <div className="w-full bg-gray-800 p-2 rounded-xl border border-gray-700 flex justify-between gap-2 shadow-inner">
+            <div className="w-full bg-gray-800 p-1 md:p-2 rounded-xl border border-gray-700 flex justify-between gap-1 md:gap-2 shadow-inner shrink-0">
                 {['P', 'R', 'N', 'D'].map((g) => (
                     <button
                         key={g}
                         onClick={() => setGear(g as any)}
-                        className={`flex-1 aspect-square md:aspect-auto md:h-12 rounded-lg font-black text-xl flex items-center justify-center transition-all shadow-lg
+                        className={`flex-1 h-10 md:h-12 rounded-lg font-black text-lg md:text-xl flex items-center justify-center transition-all shadow-lg
                             ${gear === g 
                                 ? (g === 'R' ? 'bg-red-600 text-white shadow-red-900/50' : g === 'D' ? 'bg-blue-600 text-white shadow-blue-900/50' : 'bg-green-600 text-white shadow-green-900/50') 
                                 : 'bg-gray-700 text-gray-500 hover:bg-gray-600 hover:text-gray-300'
@@ -444,8 +452,8 @@ const App: React.FC = () => {
             </div>
 
             {/* Steering */}
-            <div className="flex justify-center py-2">
-                <div className="transform scale-90 origin-center">
+            <div className="flex justify-center py-1 md:py-2 shrink-0">
+                <div className="transform scale-[0.8] md:scale-90 origin-center">
                     <SteeringWheel 
                         angle={carState.steeringAngle} 
                         maxAngle={MAX_STEERING_ANGLE}
@@ -455,10 +463,10 @@ const App: React.FC = () => {
             </div>
 
             {/* Pedals */}
-            <div className="grid grid-cols-5 gap-4 mt-auto">
+            <div className="grid grid-cols-5 gap-2 md:gap-4 mt-auto shrink-0 min-h-[80px] md:min-h-[100px]">
                 {/* Brake Pedal (Wide) */}
                 <button
-                    className={`col-span-3 h-28 rounded-xl border-b-8 active:border-b-0 active:translate-y-2 transition-all flex flex-col items-center justify-center gap-1
+                    className={`col-span-3 rounded-xl border-b-4 md:border-b-8 active:border-b-0 active:translate-y-2 transition-all flex flex-col items-center justify-center gap-1
                         ${isBrakePressed 
                             ? 'bg-red-700 border-red-900 text-white shadow-[0_0_20px_rgba(220,38,38,0.6)]' 
                             : 'bg-gray-700 border-gray-800 text-gray-400 hover:bg-gray-600'
@@ -470,15 +478,15 @@ const App: React.FC = () => {
                     onTouchStart={(e) => { e.preventDefault(); setIsBrakePressed(true); }}
                     onTouchEnd={(e) => { e.preventDefault(); setIsBrakePressed(false); }}
                 >
-                    <div className="w-16 h-1 bg-gray-900/30 rounded-full mb-2"></div>
-                    <div className="w-16 h-1 bg-gray-900/30 rounded-full mb-2"></div>
-                    <span className="text-lg font-black uppercase tracking-wider">Brake</span>
+                    <div className="w-12 md:w-16 h-1 bg-gray-900/30 rounded-full mb-1 md:mb-2"></div>
+                    <div className="w-12 md:w-16 h-1 bg-gray-900/30 rounded-full mb-1 md:mb-2"></div>
+                    <span className="text-sm md:text-lg font-black uppercase tracking-wider">Brake</span>
                     <span className="text-[10px] text-gray-400">刹车</span>
                 </button>
 
                 {/* Gas Pedal (Tall) */}
                 <button
-                    className={`col-span-2 h-28 rounded-xl border-b-8 active:border-b-0 active:translate-y-2 transition-all flex flex-col items-center justify-center gap-1
+                    className={`col-span-2 rounded-xl border-b-4 md:border-b-8 active:border-b-0 active:translate-y-2 transition-all flex flex-col items-center justify-center gap-1
                         ${isGasPressed 
                             ? 'bg-zinc-300 border-zinc-500 text-black shadow-[0_0_20px_rgba(255,255,255,0.4)]' 
                             : 'bg-zinc-700 border-zinc-900 text-zinc-400 hover:bg-zinc-600'
@@ -491,15 +499,15 @@ const App: React.FC = () => {
                     onTouchStart={(e) => { e.preventDefault(); setIsGasPressed(true); }}
                     onTouchEnd={(e) => { e.preventDefault(); setIsGasPressed(false); }}
                 >
-                    <span className="text-3xl font-black rotate-90 md:rotate-0 mt-2">|||</span>
+                    <span className="text-2xl md:text-3xl font-black rotate-90 md:rotate-0 mt-1 md:mt-2">|||</span>
                     <span className="text-[10px] font-bold mt-auto mb-2">油门</span>
                 </button>
             </div>
 
-            <div className="w-full flex items-center justify-center mt-2">
+            <div className="w-full flex items-center justify-center mt-1 md:mt-2 shrink-0">
                  <button 
                     onClick={() => setShowPredictivePath(!showPredictivePath)}
-                    className="flex items-center gap-2 text-xs text-gray-500 hover:text-white transition py-2"
+                    className="flex items-center gap-2 text-xs text-gray-500 hover:text-white transition py-1 md:py-2"
                  >
                      <Info size={14} />
                      {showPredictivePath ? "隐藏辅助线" : "显示辅助线"}

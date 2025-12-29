@@ -7,13 +7,6 @@ export const getDrivingAdvice = async (
   status: GameStatus,
   lastAction: string
 ): Promise<string> => {
-  // Use process.env.API_KEY directly as per strict guidelines
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    // Ideally this should not happen if environment is correctly configured
-    return "请配置环境变量 API_KEY 以使用 AI 教练功能。";
-  }
-
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const modelId = "gemini-3-flash-preview";
