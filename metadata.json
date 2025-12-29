@@ -1,0 +1,5 @@
+{
+  "name": "老司机倒车指南 (Parking Master)",
+  "description": "An interactive parking simulator powered by Gemini to help new drivers master perpendicular reverse parking.",
+  "requestFramePermissions": []
+}
