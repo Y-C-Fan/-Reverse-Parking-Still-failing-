@@ -130,6 +130,7 @@ const App: React.FC = () => {
   };
 
   const handleAiAdvice = async (state: CarState, status: GameStatus, action: string) => {
+    // Guidelines: API Key handled externally via process.env.API_KEY
     setIsLoadingAi(true);
     try {
         const advice = await getDrivingAdvice(state, parkingSpot, status, action);
@@ -239,8 +240,8 @@ const App: React.FC = () => {
     <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-gray-900 text-white overflow-hidden touch-none">
       
       {/* LEFT: Simulation Area */}
-      {/* ADJUSTMENT: Reduced mobile height to 35dvh to give more room for controls */}
-      <div className="relative h-[35dvh] md:h-full w-full shrink-0 bg-gray-900 overflow-hidden flex items-center justify-center border-b md:border-r border-gray-700">
+      {/* ADJUSTMENT: Desktop layout fix - added md:flex-1 and md:shrink to allow side-by-side layout without squashing controls */}
+      <div className="relative h-[35dvh] md:h-full w-full md:flex-1 shrink-0 md:shrink-0 bg-gray-900 overflow-hidden flex items-center justify-center border-b md:border-r border-gray-700">
         
         {/* Top Bar Controls */}
         <div className="absolute top-2 md:top-4 left-2 md:left-4 z-10 flex gap-2 flex-wrap max-w-[80%]">
@@ -386,7 +387,8 @@ const App: React.FC = () => {
       </div>
 
       {/* RIGHT: Controls */}
-      <div className="flex-1 w-full md:w-96 flex flex-col min-h-0 bg-gray-900 border-l border-gray-800 shadow-2xl z-20">
+      {/* ADJUSTMENT: Fixed sidebar width on desktop with md:flex-none and ensuring it doesn't get squeezed */}
+      <div className="flex-1 md:flex-none w-full md:w-96 flex flex-col min-h-0 bg-gray-900 border-l border-gray-800 shadow-2xl z-20">
         
         {/* Advice Panel - ADJUSTMENT: Reduced min-height to 60px */}
         <div className="p-2 md:p-4 bg-gray-800 border-b border-gray-700 min-h-[60px] md:min-h-[140px] flex flex-col shrink-0">
