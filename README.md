@@ -37,7 +37,8 @@ It provides a seamless transition between **2D (Top-down)** and **3D (Follow-cam
     *   Collision detection and accurate turning radius simulation.
 *   **🤖 AI Instructor**:
     *   Powered by Google Gemini 3 Flash.
-    *   Analyzes position, angle, and distance to give instant feedback (e.g., "Turn left fully now!", "Watch your tail!").
+    *   Analyzes position, angle, and distance to give instant feedback.
+    *   **Bring Your Own Key**: Securely input your own Gemini API Key in the settings (stored locally).
 
 ### 🛠️ Tech Stack
 
@@ -60,17 +61,13 @@ It provides a seamless transition between **2D (Top-down)** and **3D (Follow-cam
     npm install
     ```
 
-3.  **Configure API Key**
-    Create a `.env` file in the root directory:
-    ```env
-    VITE_API_KEY=your_google_gemini_api_key
-    ```
-    > Get a free key from [Google AI Studio](https://aistudio.google.com/).
-
-4.  **Run**
+3.  **Run**
     ```bash
     npm run dev
     ```
+
+4.  **Configure API Key**
+    Open the app in your browser, click the **Settings** icon in the top right, and enter your free Google Gemini API Key.
 
 ### 📱 Mobile Experience
 This app is optimized for mobile browsers (iOS/Android). For the best experience, use the **"Add to Home Screen"** feature in Safari or Chrome to run it in full-screen mode.
@@ -102,7 +99,7 @@ This app is optimized for mobile browsers (iOS/Android). For the best experience
 *   **🤖 AI 老司机陪练**：
     *   集成 Google Gemini 3 Flash 模型。
     *   AI 会根据车辆遥测数据（位置、角度、距离）实时分析。
-    *   在你迷茫或撞车时，给出“往左打死”、“回正”、“注意车尾”等通俗易懂的中文建议。
+    *   **自定义 Key**：在网页设置中填入你的 API Key 即可使用 AI 功能（Key 仅保存在本地）。
 
 ### 🚀 快速开始
 
@@ -117,17 +114,14 @@ This app is optimized for mobile browsers (iOS/Android). For the best experience
     npm install
     ```
 
-3.  **配置 API Key**
-    在项目根目录下创建一个 `.env` 文件，并填入你的 API Key：
-    ```env
-    VITE_API_KEY=你的_GOOGLE_GEMINI_API_KEY
-    ```
-    > 💡 你可以从 [Google AI Studio](https://aistudio.google.com/) 免费获取 API Key。
-
-4.  **运行项目**
+3.  **运行项目**
     ```bash
     npm run dev
     ```
+
+4.  **配置 API Key**
+    打开网页后，点击右上角的 **设置** 图标，填入你的 Google Gemini API Key 即可激活 AI 教练。
+    > 💡 你可以从 [Google AI Studio](https://aistudio.google.com/) 免费获取 API Key。
 
 ### 📱 手机端体验优化
 本项目针对 Vercel 部署和移动端访问进行了深度优化。

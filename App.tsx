@@ -6,7 +6,7 @@ import {
 } from './simulationUtils';
 import { CarState, GameStatus } from './types';
 import { getDrivingAdvice } from './services/geminiService';
-import { RotateCcw, MessageSquare, Info, Car, Sliders, Eye, Map, Gauge } from 'lucide-react';
+import { RotateCcw, MessageSquare, Info, Car, Sliders, Eye, Map, X } from 'lucide-react';
 
 const App: React.FC = () => {
   // Settings State
@@ -29,7 +29,7 @@ const App: React.FC = () => {
   const [isGasPressed, setIsGasPressed] = useState(false);
   const [isBrakePressed, setIsBrakePressed] = useState(false);
   
-  const [aiAdvice, setAiAdvice] = useState<string>("你好！我是你的老司机教练。现在车辆在 P 档 (驻车)。请先挂入倒挡 (R)，然后轻踩油门开始倒车入库！");
+  const [aiAdvice, setAiAdvice] = useState<string>("你好！我是你的老司机教练。请先挂入倒挡 (R)，然后轻踩油门开始倒车入库！");
   const [isLoadingAi, setIsLoadingAi] = useState(false);
   const [showPredictivePath, setShowPredictivePath] = useState(true);
 
@@ -134,10 +134,6 @@ const App: React.FC = () => {
     const advice = await getDrivingAdvice(state, parkingSpot, status, action);
     setAiAdvice(advice);
     setIsLoadingAi(false);
-  };
-
-  const manualAskAi = () => {
-    handleAiAdvice(carStateRef.current, gameStatus, "用户主动询问");
   };
 
   // Rendering Helper: Xiaomi SU7 Ultra Model

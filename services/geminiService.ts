@@ -1,15 +1,21 @@
 import { GoogleGenAI } from "@google/genai";
 import { CarState, ParkingSpot, GameStatus } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export const getDrivingAdvice = async (
   carState: CarState,
   parkingSpot: ParkingSpot,
   status: GameStatus,
   lastAction: string
 ): Promise<string> => {
+  // Use process.env.API_KEY directly as per strict guidelines
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    // Ideally this should not happen if environment is correctly configured
+    return "请配置环境变量 API_KEY 以使用 AI 教练功能。";
+  }
+
   try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const modelId = "gemini-3-flash-preview";
     
     // Normalize coordinates for the AI to understand simpler relative positions
@@ -52,7 +58,7 @@ export const getDrivingAdvice = async (
     });
 
     return response.text || "老司机正在思考...";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini API Error:", error);
     return "网络有点卡，老司机刚才没看清。再试一次？";
   }
